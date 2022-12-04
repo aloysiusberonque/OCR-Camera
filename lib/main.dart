@@ -1,91 +1,222 @@
-import 'dart:io';
-
-import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
+import 'package:quizpix/samples/questions.dart';
+import 'package:quizpix/screens/home_tab.dart';
+import 'package:quizpix/screens/login.dart';
+import 'package:quizpix/screens/registration.dart';
+import 'package:quizpix/screens/scan_confirmation.dart';
+import 'package:quizpix/screens/scan_tab.dart';
+import 'package:quizpix/screens/home_controller.dart';
+import 'package:quizpix/widgets/home_button.dart';
+import 'package:quizpix/widgets/pro_card.dart';
+import 'package:quizpix/widgets/q_button.dart';
+import 'package:quizpix/widgets/q_button_outline.dart';
+import 'package:quizpix/widgets/question_list.dart';
+import 'package:quizpix/widgets/q_icon_button.dart';
+import 'package:quizpix/widgets/quiz_item.dart';
+import 'package:quizpix/widgets/q_dropdown_button.dart';
+import 'package:quizpix/widgets/search_bar.dart';
+import 'package:quizpix/widgets/stat_card.dart';
+import 'package:quizpix/widgets/scan_button.dart';
+import 'package:quizpix/widgets/q_text_field.dart';
 
-import 'details.dart';
-
-main() async {
-  runApp(MaterialApp(home: MyApp()));
+void main() {
+  runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
+// Future main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   await Firebase.initializeApp();
+
+//   runApp(const MyApp());
+// }
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  // This widget is the root of your application.
   @override
-  _MyAppState createState() => _MyAppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const LoginScreen(),
+        '/register': (context) => const RegistrationScreen(),
+        '/home': (context) => const HomeController(),
+        // '/scan-confirm':  (context) => const ScanConfirmation(),
+      },
+      theme: ThemeData(
+        backgroundColor: const Color(0xfff5f5f5),
+        //color palette
+        colorScheme: const ColorScheme.light().copyWith(
+          //primary orange
+          primary: const Color(0xfff69036),
+          onPrimary: const Color(0xffffffff),
+          //accent purple
+          secondary: const Color(0xff6d5271),
+          onSecondary: const Color(0xffffffff),
+          //accent orange
+          tertiary: const Color(0xfffebd54),
+        ),
+        //default text
+        fontFamily: 'Futura',
+        textTheme: const TextTheme(
+          headline1: TextStyle(
+            fontSize: 40.0,
+            fontWeight: FontWeight.w700,
+          ),
+          headline2: TextStyle(fontSize: 30.0),
+          headline3: TextStyle(fontSize: 20.0),
+          bodyText1: TextStyle(fontSize: 16.0),
+          subtitle1: TextStyle(fontSize: 12.0),
+        ),
+        //button themes
+        elevatedButtonTheme: ElevatedButtonThemeData(
+            style: ElevatedButton.styleFrom(
+          minimumSize: const Size.fromHeight(50),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
+        )),
+        outlinedButtonTheme: OutlinedButtonThemeData(
+            style: OutlinedButton.styleFrom(
+                minimumSize: const Size.fromHeight(50),
+                side: const BorderSide(
+                  color: Color(0xfff69036),
+                  width: 5,
+                ),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8.0)))),
+        //icon
+        iconTheme: const IconThemeData(size: 20.0),
+      ),
+    );
+  }
 }
 
-class _MyAppState extends State<MyApp> {
-  String _text = '';
-  PickedFile _image;
-  final picker = ImagePicker();
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({super.key, required this.title});
+
+  // This widget is the home page of your application. It is stateful, meaning
+  // that it has a State object (defined below) that contains fields that affect
+  // how it looks.
+
+  // This class is the configuration for the state. It holds the values (in this
+  // case the title) provided by the parent (in this case the App widget) and
+  // used by the build method of the State. Fields in a Widget subclass are
+  // always marked "final".
+
+  final String title;
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int _counter = 0;
+
+  void _incrementCounter() {
+    setState(() {
+      // This call to setState tells the Flutter framework that something has
+      // changed in this State, which causes it to rerun the build method below
+      // so that the display can reflect the updated values. If we changed
+      // _counter without calling setState(), then the build method would not be
+      // called again, and so nothing would appear to happen.
+      _counter++;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    // This method is rerun every time setState is called, for instance as done
+    // by the _incrementCounter method above.
+    //
+    // The Flutter framework has been optimized to make rerunning build methods
+    // fast, so that you can just rebuild anything that needs updating rather
+    // than having to individually change instances of widgets.
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Text Recognition'),
-          actions: [
-            TextButton(
-              onPressed: scanText,
-              child: Text(
-                'Scan',
-                style: TextStyle(color: Colors.white),
+      appBar: AppBar(
+        // Here we take the value from the MyHomePage object that was created by
+        // the App.build method, and use it to set our appbar title.
+        title: Text(widget.title),
+      ),
+      body: Center(
+        // Center is a layout widget. It takes a single child and positions it
+        // in the middle of the parent.
+        child: Column(
+          // Column is also a layout widget. It takes a list of children and
+          // arranges them vertically. By default, it sizes itself to fit its
+          // children horizontally, and tries to be as tall as its parent.
+          //
+          // Invoke "debug painting" (press "p" in the console, choose the
+          // "Toggle Debug Paint" action from the Flutter Inspector in Android
+          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+          // to see the wireframe for each widget.
+          //
+          // Column has various properties to control how it sizes itself and
+          // how it positions its children. Here we use mainAxisAlignment to
+          // center the children vertically; the main axis here is the vertical
+          // axis because Columns are vertical (the cross axis would be
+          // horizontal).
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            QuestionList(
+              questions: questions,
+            ),
+            // const StatCard(
+            //   type: 'score',
+            //   value: 150,
+            // ),
+            // scan button samples:
+            // ScanButton(
+            //   label: 'Image',
+            //   icon: Icon(
+            //     Icons.camera_alt,
+            //     size: 50.0,
+            //     color: Theme.of(context).colorScheme.primary,
+            //   ),
+            //   onPress: () {},
+            //   isLeft: true,
+            // ),
+            ScanButton(
+              label: 'Image',
+              icon: Icon(
+                Icons.camera_alt,
+                size: 50.0,
+                color: Theme.of(context).colorScheme.primary,
               ),
-            )
+              onPress: () {},
+              isLeft: false,
+            ),
+            // button sample
+            QButton(onPress: () {}, label: 'button test', icon: null),
+            QButton(
+                onPress: () {},
+                label: 'button test',
+                icon: const Icon(Icons.access_alarm)),
+            Text(
+              '$_counter',
+              style: Theme.of(context).textTheme.headline4,
+            ),
+            // QTextField(label: "Email Address");
+            // ProCard(),
+            // SearchBar(),
+            // HomeButton(
+            //   isFree: true,
+            //   isActive: false,
+            //   onPress: () {},
+            // ),
+            QDropdownButton(isSort: true),
+            QuizItem(author: 'a', title: 's', onPress: () {}),
+            QButtonOutline(onPress: () {}, label: 'button test'),
+            QIconButton(onPress: () {}, icon: Icons.download),
           ],
         ),
-        floatingActionButton: FloatingActionButton(
-          onPressed: getImage,
-          child: Icon(Icons.add_a_photo),
-        ),
-        body: Container(
-          height: double.infinity,
-          width: double.infinity,
-          child: _image != null
-              ? Image.file(
-                  File(_image.path),
-                  fit: BoxFit.fitWidth,
-                )
-              : Container(),
-        ));
-  }
-
-  Future scanText() async {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return Center(
-          child: CircularProgressIndicator(),
-        );
-      },
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _incrementCounter,
+        tooltip: 'Increment',
+        child: const Icon(Icons.add),
+      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
-    final FirebaseVisionImage visionImage =
-        FirebaseVisionImage.fromFile(File(_image.path));
-    final TextRecognizer textRecognizer =
-        FirebaseVision.instance.textRecognizer();
-    final VisionText visionText =
-        await textRecognizer.processImage(visionImage);
-
-    for (TextBlock block in visionText.blocks) {
-      for (TextLine line in block.lines) {
-        _text += line.text + '\n';
-      }
-    }
-
-    Navigator.of(context).pop();
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => Details(_text)));
-  }
-
-  Future getImage() async {
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
-    setState(() {
-      if (pickedFile != null) {
-        _image = pickedFile;
-      } else {
-        print('No image selected');
-      }
-    });
   }
 }
