@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:quizpix/screens/scan_confirmation.dart';
 import 'package:quizpix/widgets/scan_button.dart';
 
 import 'dart:io';
@@ -48,18 +49,6 @@ class _ScanTabState extends State<ScanTab> {
       //   onPressed: getImage,
       //   child: Icon(Icons.add_a_photo),
       // ),
-      appBar: AppBar(
-        title: Text('Text Recognition'),
-        actions: [
-          TextButton(
-            onPressed: scanText,
-            child: Text(
-              'Scan',
-              style: TextStyle(color: Colors.white),
-            ),
-          )
-        ],
-      ),
       backgroundColor: Colors.black,
       body: SafeArea(
         child: Container(
@@ -124,18 +113,18 @@ class _ScanTabState extends State<ScanTab> {
                   },
                   isLeft: false),
               const Spacer(flex: 1),
-              _load == true ?
-              Container(
-                height: double.infinity,
-                width: double.infinity,
-                child: _image != null
-                    ? Image.file(
-                        File(_image.path),
-                        fit: BoxFit.fitWidth,
-                      )
-                    : Container(),
-              ) : Container(
-              )
+              _load == true
+                  ? Container(
+                      height: double.infinity,
+                      width: double.infinity,
+                      child: _image != null
+                          ? Image.file(
+                              File(_image.path),
+                              fit: BoxFit.fitWidth,
+                            )
+                          : Container(),
+                    )
+                  : Container()
             ],
           ),
         ),
@@ -166,8 +155,8 @@ class _ScanTabState extends State<ScanTab> {
     }
 
     Navigator.of(context).pop();
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => Details(_text)));
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => ScanConfirmation(text: _text)));
   }
 
   Future getImage() async {
@@ -176,6 +165,7 @@ class _ScanTabState extends State<ScanTab> {
       if (pickedFile != null) {
         _image = pickedFile;
         _load = false;
+        scanText();
       } else {
         print('No image selected');
       }

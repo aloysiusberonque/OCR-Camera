@@ -12,10 +12,10 @@ class HomeController extends StatefulWidget {
 }
 
 class _HomeControllerState extends State<HomeController> {
-  int currentIndex = 0;
+  int currentIndex = 1;
 
   static const List<Widget> homeOptions = <Widget>[
-    ProfileTab(),
+    ProfileTab(username: "Thunder Rat", title: "Quiz Maker"),
     ScanTab(),
     HomeTab(),
   ];
